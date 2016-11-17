@@ -1,0 +1,31 @@
+base: &base
+  adapter: sqlite3
+  timeout: 5000
+
+development:
+  database: db/development.sqlite3
+  <<: *base
+
+test:
+  database: db/test.sqlite3
+  <<: *base
+
+{% if pwpush_db == 'postgres' %}
+private:
+  adapter: postgresql
+  database: "{{pwpush_db_database}}"
+  username: "{{pwpush_db_username}}"
+  password: "{{pwpush_db_password}}"
+  pool: 5
+  timeout: 5000
+  encoding: utf8
+  reconnect: false
+{% else %}
+private:
+  database: db/private.sqlite3
+  <<: *base
+{% endif %}
+
+production:
+  database: db/production.sqlite3
+  <<: *base

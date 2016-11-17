@@ -1,0 +1,32 @@
+- yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - ruby
+    - git
+    - ruby-devel
+    - gcc
+    - make
+    - sqlite-devel
+    - gcc-c++
+    - supervisor
+
+- yum:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - postgresql-devel
+    - postgresql
+  when: pwpush_db == 'postgres'
+
+- name: enable firewalld service
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+  tags: firewalld
+
+- name: configure firewalld
+  firewalld: "port=5000/tcp permanent=true state=enabled"
+  notify: restart firewalld
+  tags: firewalld

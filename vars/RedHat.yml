@@ -1,0 +1,3 @@
+supervisor_path: /etc/supervisord.d
+supervisor_name: supervisord
+supervisor_conf_name: pwpush.ini

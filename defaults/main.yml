@@ -1,0 +1,8 @@
+pwpush_user: pwpush
+pwpush_db: sqlite # postgres setup not finished
+#db_admin_username: postgres
+#db_admin_password: '{{vault_db_admin_password}}'
+#pwpush_db_database: pwpush
+#pwpush_db_username: pwpush
+# don't use these passwords
+#pwpush_db_password: '{{vault_pwpush_db_password}}'

@@ -1,0 +1,87 @@
+- include_vars: "{{ ansible_os_family }}.yml"
+
+- include: "{{ ansible_os_family }}.yml"
+  become: yes
+
+- name: create {{pwpush_user}} group
+  group: name={{pwpush_user}} state=present
+  become: yes
+
+- name: create {{pwpush_user}} user
+  user: name={{pwpush_user}} groups={{pwpush_user}} state=present
+  become: yes
+
+- git: 
+    repo: https://github.com/pglombardo/PasswordPusher.git
+    dest: /opt/PasswordPusher
+  become: yes
+  delegate_to: "{{ inventory_hostname }}"
+
+#- name: Set postgres password
+#  command: >
+#    sudo -u {{ db_admin_username }} psql -d {{ db_admin_username }} 
+#    -c "ALTER USER postgres with  password '{{ db_admin_password }}';"
+#  when: pwpush_db == 'postgres'
+#  become: yes
+#
+#- name: Create database user for pwpush
+#  postgresql_user: >
+#    login_host=localhost login_user={{ db_admin_username }} 
+#    login_password="{{ db_admin_password }}" name="{{ pwpush_db_username }}"
+#    password="{{ pwpush_db_password }}" state=present
+#  when: pwpush_db == 'postgres'
+#  become: yes
+#
+#- name: Create database for pwpush
+#  postgresql_db: >
+#    login_host=localhost login_user={{ db_admin_username }} 
+#    login_password="{{ db_admin_password }}" name={{ pwpush_db_database }} 
+#    state=present owner={{ pwpush_db_username }}
+#  when: pwpush_db == 'postgres'
+#  become: yes
+
+- template:
+    src: database.yml.j2
+    dest: /opt/PasswordPusher/config/database.yml
+  become: yes
+
+- shell: "cd /opt/PasswordPusher && gem install bundler"
+  become: yes
+
+- file:
+    path: /opt/PasswordPusher
+    state: directory
+    owner: "{{pwpush_user}}"
+    group: "{{pwpush_user}}"
+    recurse: yes
+  become: yes
+
+- file:
+    path: /var/log/pwpush
+    state: directory
+  become: yes
+
+- script: setup.sh
+  when: pwpush_db != 'postgres'
+  become: yes
+  become_user: "{{pwpush_user}}"
+
+- script: setup-postgres.sh
+  when: pwpush_db == 'postgres'
+
+- shell: "gem install foreman"
+  become: yes
+
+- name: configure supervisord
+  template:
+    src: supervisor.conf.j2
+    dest: "{{supervisor_path}}/{{supervisor_conf_name}}"
+  notify: restart supervisor
+  become: yes
+
+- name: enable supervisord
+  service: 
+    name: "{{supervisor_name}}" 
+    enabled: yes
+    state: started
+  become: yes

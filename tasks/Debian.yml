@@ -1,0 +1,23 @@
+- apt:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - ruby
+    - git
+    - sqlite3
+    - ruby-sqlite3
+    - libsqlite3-dev
+    - ruby-dev
+    - libssl-dev
+    - gcc
+    - make
+    - g++
+    - supervisor
+
+- apt:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - postgresql
+    - libpq-dev
+  when: pwpush_db == 'postgres'
