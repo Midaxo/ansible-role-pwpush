@@ -80,7 +80,8 @@
   become: yes
 
 - name: enable supervisord
-  service: 
+  systemd: 
     name: "{{supervisor_name}}" 
     enabled: yes
+    state: started
   become: yes
