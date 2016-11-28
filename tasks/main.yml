@@ -80,7 +80,5 @@
   become: yes
 
 - name: enable supervisord
-  service: 
-    name: "{{supervisor_name}}" 
-    enabled: yes
+  shell: systemctl enable {{supervisor_name}}
   become: yes
