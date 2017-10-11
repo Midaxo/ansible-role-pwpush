@@ -1,4 +1,4 @@
-if /usr/bin/ruby -V | grep "2.4*"; then
+if /usr/bin/ruby -v | grep "2.4*"; then
 	echo "Ruby already installed, exiting.."
 	exit 0
 fi
