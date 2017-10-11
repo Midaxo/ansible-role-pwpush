@@ -2,17 +2,18 @@
     name: "{{item}}"
     state: present
   with_items:
-    - ruby
     - git
     - sqlite3
     - ruby-sqlite3
     - libsqlite3-dev
-    - ruby-dev
     - libssl-dev
     - gcc
     - make
     - g++
     - supervisor
+
+- script: setup-ruby.sh
+  become: yes
 
 - apt:
     name: "{{item}}"
