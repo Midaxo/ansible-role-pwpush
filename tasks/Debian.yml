@@ -12,6 +12,11 @@
     - g++
     - supervisor
 
+- name: remove the base ruby package if installed
+  apt: name={{item}} state=absent
+  with_items:
+    - ruby
+
 - script: setup-ruby.sh
   become: yes
 
